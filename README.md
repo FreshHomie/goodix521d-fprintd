@@ -5,6 +5,8 @@ Experimental **Fedora 44 x86_64** support for the USB fingerprint reader GOODIX
 
 ****TESTED ONLY ON ASUS GA503QR - FEEL FREE TO TEST FORK ETC.****
 
+*THIS PROJECT WAS AI ASSISTED*
+
 ****This was built solely for my personal needs and is complete for that. If this driver does not work as intended on your machine or setup please feel free to use this as a baseline for further development.****
 
 ***BEFORE UNLOCKING THE DRIVER TAKES ROUGHLY 2 SECONDS ON THE FIRST UNLOCK TO CALIBRATE***
