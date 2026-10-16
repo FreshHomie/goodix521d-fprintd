@@ -26,11 +26,10 @@ configured readers keep their fingerprints and calibration on upgrade.
 
 ## Status
 
-Experimental release, tested on the development machine. Release17 passed KDE
+Experimental release, tested on the development machine. It passed KDE
 enrollment/unlock, wrong-finger rejection, reboot and suspend/resume tests.
 Release18 builds every compiled component from source and passed the package
-audit, 17 worker checks and saved-live-scan replay. Release18 itself has not yet
-been installed for live testing. First-time setup on another machine has not
+audit, 17 worker checks and saved-live-scan replay. First-time setup on another machine has not
 been verified. Keep password access available.
 
 Placement can still cause rejection. A cold reader or resumed reader may need
