@@ -1,0 +1,82 @@
+# Maintainer: FreshHomie <https://github.com/FreshHomie>
+pkgname=goodix521d-fprintd
+pkgver=0.1.0
+pkgrel=1
+pkgdesc='Native Goodix USB 27c6:521d fingerprint backend with private libfprint/fprintd'
+arch=('x86_64')
+url='https://github.com/FreshHomie/goodix521d-fprintd'
+license=('LGPL-2.1-or-later' 'GPL-2.0-or-later' 'MIT')
+depends=('glibc' 'libgcc' 'fprintd>=1.94.5' 'python' 'glib2' 'libgusb' 'libusb' 'json-glib'
+         'openssl' 'libdeflate' 'polkit' 'systemd')
+makedepends=('meson' 'ninja' 'pkgconf' 'glib2-devel' 'python-packaging')
+install=goodix521d-fprintd.install
+# The worker pins its library's SHA256. Strip it exactly once in the upstream
+# builder; makepkg's later strip/debug stage must not change the pinned bytes.
+options=('!strip' '!debug')
+_upstream_release=18
+source=("${pkgname}-${pkgver}-r${_upstream_release}.tar.gz::${url}/releases/download/v${pkgver}-${_upstream_release}/${pkgname}-${pkgver}.tar.gz"
+        'arch-prepare.py'
+        'README.md')
+sha256sums=('3617925bbdd7274a209c9148b094a04f4581190eb4bbf601ff3fcedba05bfa3c'
+            '4fa19374c2663ddb23c44aba719789d8c891fd43c298bcc4aa428539067cb95f'
+            '12894ea1ebab68a7ff61f031e75dad3a0e7d8b3b7227480531af8f1ff30e36a6')
+
+prepare() {
+  python "$srcdir/arch-prepare.py" "$srcdir/$pkgname-$pkgver"
+}
+
+build() {
+  cd "$srcdir/$pkgname-$pkgver"
+  python package/build-runtime.py --native --stage package/stage
+}
+
+check() {
+  cd "$srcdir/$pkgname-$pkgver"
+  python - <<'PY'
+from pathlib import Path
+import ast,hashlib,json,subprocess
+base=Path('package/stage/usr/lib/goodix521d')
+library=base/'libgoodix521d-native.so'
+digest=hashlib.sha256(library.read_bytes()).hexdigest()
+assert digest in (base/'rpc.py').read_text()
+assert digest in (base/'native/native_rpc.py').read_text()
+assert digest==json.loads((base/'native/native-engine.json').read_text())['sha256']
+for source in base.rglob('*.py'):
+    ast.parse(source.read_text())
+    assert '/usr/lib64' not in source.read_text() and '/usr/libexec' not in source.read_text()
+for name in ('goodix-capture-one','goodix-capture-session','goodix-contact-probe','fprintd'):
+    dynamic=subprocess.check_output(['readelf','-d',str(base/name)],text=True)
+    for line in dynamic.splitlines():
+        if 'RPATH' in line or 'RUNPATH' in line:
+            assert '/usr/lib64' not in line and '/usr/libexec' not in line and '/src/' not in line
+assert not any('windows' in source.name or source.suffix=='.dll' for source in base.rglob('*'))
+PY
+}
+
+package() {
+  cd "$srcdir/$pkgname-$pkgver"
+  cp -a package/stage/usr "$pkgdir/"
+  # Strip capture/daemon debug data explicitly; never mutate the pinned engine.
+  local executable
+  for executable in fprintd goodix-capture-one goodix-capture-session goodix-contact-probe \
+                    daemon-lib/libfprint-2.so.2.0.0 capture-lib/libfprint-2.so.2.0.0; do
+    strip --strip-unneeded "$pkgdir/usr/lib/goodix521d/$executable"
+  done
+  install -Dm755 package/native-runtime/setup.py "$pkgdir/usr/bin/goodix521d-setup"
+  install -Dm755 package/runtime/import-contact-reference.py "$pkgdir/usr/bin/goodix521d-import-contact-reference"
+  install -Dm644 package/desktop/goodix521d-setup.desktop "$pkgdir/usr/share/applications/goodix521d-setup.desktop"
+  install -Dm644 package/native-runtime/goodix521d-worker.service "$pkgdir/usr/lib/systemd/system/goodix521d-worker.service"
+  install -Dm644 package/systemd/goodix521d-worker.socket "$pkgdir/usr/lib/systemd/system/goodix521d-worker.socket"
+  install -Dm644 package/native-runtime/50-goodix521d.conf "$pkgdir/usr/lib/systemd/system/fprintd.service.d/50-goodix521d.conf"
+  install -Dm644 package/systemd/goodix521d.sysusers "$pkgdir/usr/lib/sysusers.d/goodix521d.conf"
+  install -Dm644 package/systemd/70-goodix521d.rules "$pkgdir/usr/lib/udev/rules.d/70-goodix521d.rules"
+  install -Dm644 "$srcdir/README.md" "$pkgdir/usr/share/doc/$pkgname/README.md"
+  install -Dm644 package/ARCH-ADAPTATION.json "$pkgdir/usr/share/doc/$pkgname/ARCH-ADAPTATION.json"
+  install -Dm644 package/native-engine/SOURCE-MANIFEST.json "$pkgdir/usr/share/doc/$pkgname/SOURCE-MANIFEST.json"
+  install -Dm644 re/vendor-harness/loader/LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+  install -Dm644 package/licenses/COPYING.libfprint "$pkgdir/usr/share/licenses/$pkgname/COPYING.libfprint"
+  install -Dm644 package/licenses/COPYING.fprintd "$pkgdir/usr/share/licenses/$pkgname/COPYING.fprintd"
+  install -Dm644 re/pr81-LICENSE "$pkgdir/usr/share/licenses/$pkgname/pr81-LICENSE"
+  # Writable reader state remains local and is never bundled with enrollment data.
+  install -dm755 "$pkgdir/var/lib/goodix521d"
+}
