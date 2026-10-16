@@ -68,6 +68,22 @@ reject repeated areas and ask for a small shift or rotation.
 
 ## Source and builds
 
+The buildable source is now tracked directly in this repository: native engine,
+modified libfprint/fprintd, capture helpers and build scripts. See
+[BUILDING.md](BUILDING.md) for Fedora/Arch dependencies and complete instructions.
+No RPM extraction is required.
+
+After installing the documented build dependencies:
+
+```sh
+git clone https://github.com/FreshHomie/goodix521d-fprintd.git
+cd goodix521d-fprintd
+python3 package/build-runtime.py --native --stage package/stage
+```
+
+This compiles to `package/stage/usr` without installing or changing authentication.
+The guide also explains building an installable RPM directly from the Git checkout.
+
 The release contains the source RPM and full source archive, including the
 native engine, pinned upstream kernels, patched libfprint/fprintd, capture
 helpers, compile recipe and build scripts. No prebuilt driver binaries are used
