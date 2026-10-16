@@ -7,6 +7,8 @@ Experimental **Fedora 44 x86_64** support for the USB fingerprint reader GOODIX
 
 ****This was built solely for my personal needs and is complete for that. If this driver does not work as intended on your machine or setup please feel free to use this as a baseline for further development.****
 
+***BEFORE UNLOCKING THE DRIVER TAKES ROUGHLY 2 SECONDS ON THE FIRST UNLOCK TO CALIBRATE***
+
 Native image processing, enrollment and matching integrated with libfprint,
 fprintd and KDE/GNOME. **No Windows DLL, Wine or proprietary engine download
 is required.** Other Goodix USB IDs and SPI readers are not supported.
