@@ -1,0 +1,36 @@
+[Unit]
+Description=Unprivileged Goodix 521d algorithm worker
+Requires=goodix521d-worker.socket
+After=goodix521d-worker.socket
+ConditionPathExists=/usr/lib64/goodix521d/libgoodix521d-native.so
+
+[Service]
+Type=simple
+User=goodix-fp
+Group=goodix-fp
+ExecStart=/usr/libexec/goodix521d/native/worker.py
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+PrivateNetwork=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+RestrictAddressFamilies=AF_UNIX
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+CapabilityBoundingSet=
+AmbientCapabilities=
+SystemCallArchitectures=native
+SystemCallFilter=@system-service arch_prctl prctl
+MemoryDenyWriteExecute=yes
+MemoryMax=640M
+TasksMax=24
+LimitCORE=0
+UMask=0077
+TimeoutStopSec=10

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Goodix Fingerprint Setup
+Comment=Set up the Goodix 521d fingerprint reader
+Exec=pkexec /usr/bin/goodix521d-setup
+Icon=preferences-system
+Terminal=true
+Categories=Settings;HardwareSettings;

@@ -1,0 +1,103 @@
+module goodix521d 1.7;
+require {
+    type init_t, fprintd_t, fprintd_exec_t, bin_t, lib_t, ld_so_t, ld_so_cache_t;
+    type usr_t, etc_t, locale_t, var_t, var_lib_t, var_run_t, tmp_t, proc_t;
+    type device_t, null_device_t, zero_device_t, random_device_t, urandom_device_t;
+    type passwd_file_t, init_var_run_t, cert_t;
+    attribute domain, file_type, exec_type;
+    role system_r;
+    class process { transition fork sigchld signal sigkill signull setrlimit };
+    class process2 nnp_transition;
+    class file { read write open getattr create setattr unlink execute execute_no_trans entrypoint map ioctl lock rename };
+    class dir { search read open getattr write add_name remove_name create setattr rmdir mounton };
+    class lnk_file { read getattr };
+    class chr_file { read write open getattr ioctl };
+    class sock_file { read write open getattr create setattr unlink };
+    class unix_stream_socket { create bind connect connectto accept listen read write getattr getopt setopt shutdown ioctl };
+    class fd use;
+    class fifo_file { read write getattr };
+}
+type goodix_worker_t, domain;
+type goodix_worker_exec_t, file_type, exec_type;
+type goodix_bridge_exec_t, file_type, exec_type;
+type goodix_worker_state_t, file_type;
+type goodix_worker_var_run_t, file_type;
+type goodix_worker_tmp_t, file_type;
+type goodix_capture_cache_var_run_t, file_type;
+role system_r types goodix_worker_t;
+
+# Native worker needs no writable executable mappings.
+allow goodix_worker_t self:process { fork sigchld signal sigkill signull setrlimit };
+allow init_t goodix_worker_t:process { transition signal sigkill signull };
+allow init_t goodix_worker_t:process2 nnp_transition;
+allow goodix_worker_t init_t:process sigchld;
+type_transition init_t goodix_worker_exec_t:process goodix_worker_t;
+allow init_t goodix_worker_exec_t:file { read open getattr execute };
+allow goodix_worker_t goodix_worker_exec_t:file { read open getattr execute execute_no_trans entrypoint map };
+allow goodix_worker_t goodix_bridge_exec_t:file { read open getattr map };
+allow goodix_worker_t { bin_t ld_so_t lib_t }:file { read open getattr execute execute_no_trans map };
+allow goodix_worker_t { bin_t lib_t usr_t }:lnk_file { read getattr };
+allow goodix_worker_t { lib_t usr_t bin_t etc_t locale_t var_t var_lib_t var_run_t tmp_t proc_t device_t }:dir { search read open getattr };
+allow goodix_worker_t { ld_so_cache_t etc_t locale_t usr_t proc_t }:file { read open getattr map };
+allow goodix_worker_t { null_device_t zero_device_t random_device_t urandom_device_t }:chr_file { read write open getattr };
+allow goodix_worker_t goodix_worker_state_t:dir { search read open getattr };
+allow goodix_worker_t goodix_worker_state_t:file { read open getattr map };
+allow fprintd_t goodix_worker_state_t:dir { search getattr };
+allow fprintd_t goodix_worker_state_t:file { read open getattr ioctl };
+allowxperm fprintd_t goodix_worker_state_t:file ioctl { 0x542a 0x5451 };
+# Python's ordinary startup resolves its account and probes these directories.
+# No password hashes or certificate contents are exposed by these rules.
+allow goodix_worker_t passwd_file_t:file { read open getattr map };
+allow goodix_worker_t { init_var_run_t cert_t }:dir { search getattr };
+
+# CPython checks script/journal descriptors for terminal state and close-on-exec.
+# Restrict ioctl commands to the observed checks, rather than all ioctls.
+allow goodix_worker_t { goodix_worker_exec_t goodix_bridge_exec_t }:file ioctl;
+allowxperm goodix_worker_t { goodix_worker_exec_t goodix_bridge_exec_t }:file ioctl { 0x542a 0x5451 };
+allow fprintd_t goodix_bridge_exec_t:file ioctl;
+allowxperm fprintd_t goodix_bridge_exec_t:file ioctl { 0x542a 0x5451 };
+allow goodix_worker_t { self init_t }:unix_stream_socket ioctl;
+allowxperm goodix_worker_t { self init_t }:unix_stream_socket ioctl { 0x5413 0x542a 0x5451 };
+
+# Worker-private temporary files never become root controller input paths.
+type_transition goodix_worker_t tmp_t:dir goodix_worker_tmp_t;
+# tempfile probes the base directory with a file before creating a job directory.
+# Label those probe files private as well; do not grant generic tmp_t writes.
+type_transition goodix_worker_t tmp_t:file goodix_worker_tmp_t;
+type_transition goodix_worker_t goodix_worker_tmp_t:file goodix_worker_tmp_t;
+type_transition goodix_worker_t goodix_worker_tmp_t:dir goodix_worker_tmp_t;
+allow goodix_worker_t tmp_t:dir { search read open getattr write add_name remove_name };
+allow goodix_worker_t goodix_worker_tmp_t:dir { search read open getattr write add_name remove_name create setattr rmdir };
+allow goodix_worker_t goodix_worker_tmp_t:file { read write open getattr create setattr unlink map };
+allow goodix_worker_t self:fifo_file { read write getattr };
+allow goodix_worker_t self:fd use;
+allow goodix_worker_t init_t:fd use;
+allow goodix_worker_t init_t:fifo_file { read write getattr };
+
+# Root-only activation socket; fprintd keeps its existing executable-memory ban.
+# Systemd creates the socket with the activated service's process label,
+# goodix_worker_t. Its sock_file pathname has the separate runtime-file label.
+# Observed enforcing-mode denial: init_t -> goodix_worker_t socket { create }.
+allow init_t goodix_worker_t:unix_stream_socket { create bind listen getattr getopt setopt read write shutdown };
+type_transition init_t var_run_t:dir goodix_worker_var_run_t "goodix521d";
+type_transition init_t goodix_worker_var_run_t:sock_file goodix_worker_var_run_t;
+allow init_t goodix_worker_var_run_t:dir { search read open getattr write add_name remove_name create setattr rmdir };
+allow init_t goodix_worker_var_run_t:sock_file { read write open getattr create setattr unlink };
+allow goodix_worker_t goodix_worker_var_run_t:dir { search read open getattr };
+allow goodix_worker_t self:unix_stream_socket { create connect accept listen read write getattr getopt setopt shutdown };
+allow goodix_worker_t init_t:unix_stream_socket { accept listen read write getattr getopt setopt shutdown };
+allow fprintd_t goodix_worker_var_run_t:dir { search read open getattr };
+allow fprintd_t goodix_worker_var_run_t:sock_file { read write open getattr };
+allow fprintd_t { goodix_worker_t init_t }:unix_stream_socket connectto;
+allow fprintd_t goodix_bridge_exec_t:file { read open getattr execute execute_no_trans map };
+
+# Separate temporary root-only calibration storage, removed with fprintd.
+type_transition init_t var_run_t:dir goodix_capture_cache_var_run_t "goodix521d-capture";
+type_transition fprintd_t goodix_capture_cache_var_run_t:file goodix_capture_cache_var_run_t;
+# ProtectSystem's writable RuntimeDirectory is bind-mounted during systemd
+# namespace setup. Limit mount targets to this root-private directory label.
+allow init_t goodix_capture_cache_var_run_t:dir { search read open getattr write add_name remove_name create setattr rmdir mounton };
+allow init_t goodix_capture_cache_var_run_t:file { read open getattr write unlink };
+allow fprintd_t goodix_capture_cache_var_run_t:dir { search read open getattr write add_name remove_name };
+allow fprintd_t goodix_capture_cache_var_run_t:file { read write open getattr create setattr unlink lock rename ioctl };
+allowxperm fprintd_t goodix_capture_cache_var_run_t:file ioctl { 0x542a 0x5451 };

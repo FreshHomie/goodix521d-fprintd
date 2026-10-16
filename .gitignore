@@ -1,0 +1,13 @@
+# Local compile/package output; the native build/type17-core.c is source.
+/build/
+/libfprint/build-package*/
+/package/stage/
+/package/build-fprintd/
+/package/daemon-pkgconfig/
+/package/runtime-build.log
+/package/build-report.json
+/package/experiments/milan521d/build/production-pic/
+/package/experiments/milan521d/build/libgoodix521d-native.so
+*.o
+*.pyc
+__pycache__/

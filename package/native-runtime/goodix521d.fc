@@ -1,0 +1,8 @@
+/usr/libexec/goodix521d/fprintd -- system_u:object_r:fprintd_exec_t:s0
+/usr/libexec/goodix521d/(bridge\.py|rpc\.py|contact_reference\.py|capture_cache\.py|capture_session\.py|goodix-(capture-one|capture-session|contact-probe)) -- system_u:object_r:goodix_bridge_exec_t:s0
+/usr/libexec/goodix521d/setup_support\.py -- system_u:object_r:goodix_bridge_exec_t:s0
+/var/lib/goodix521d(/.*)? system_u:object_r:goodix_worker_state_t:s0
+/run/goodix521d(/.*)? system_u:object_r:goodix_worker_var_run_t:s0
+/run/goodix521d-capture(/.*)? system_u:object_r:goodix_capture_cache_var_run_t:s0
+/usr/libexec/goodix521d/native/(worker\.py|native_engine\.py|native-engine\.json) -- system_u:object_r:goodix_worker_exec_t:s0
+/usr/libexec/goodix521d/native/(bridge\.py|native_base_bridge\.py|native_rpc\.py) -- system_u:object_r:goodix_bridge_exec_t:s0

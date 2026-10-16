@@ -1,0 +1,2 @@
+# Start cold calibration when this USB reader appears. Capture remains root-owned.
+ACTION=="add", SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTR{idVendor}=="27c6", ATTR{idProduct}=="521d", TAG+="systemd", ENV{SYSTEMD_WANTS}+="fprintd.service"
