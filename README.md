@@ -3,9 +3,9 @@
 Experimental **Fedora 44 x86_64** support for the USB fingerprint reader GOODIX
 **27c6:521d**, firmware **GFUSB_GM168SEC_APP_10019**.
 
-TESTED ONLY ON ASUS GA503QR - FEEL FREE TO TEST FORK ETC.
+****TESTED ONLY ON ASUS GA503QR - FEEL FREE TO TEST FORK ETC.****
 
-This was built solely for my personal needs and is complete for that. If this driver does not work as intended on your machine or setup please feel free to use this as a baseline for further development.
+****This was built solely for my personal needs and is complete for that. If this driver does not work as intended on your machine or setup please feel free to use this as a baseline for further development.****
 
 Native image processing, enrollment and matching integrated with libfprint,
 fprintd and KDE/GNOME. **No Windows DLL, Wine or proprietary engine download
