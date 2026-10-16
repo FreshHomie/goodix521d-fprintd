@@ -1,0 +1,23 @@
+post_install() {
+  cat <<'EOF'
+Goodix 521d backend installed (experimental, USB 27c6:521d, firmware10019).
+Run: sudo goodix521d-setup
+Then enroll through KDE/GNOME or fprintd-enroll.
+Setup and this package do not edit PAM. For lock-screen/login authentication,
+see /usr/share/doc/goodix521d-fprintd/README.md.
+EOF
+}
+post_upgrade() {
+  echo 'Finish active scans, then restart goodix521d-worker.service and fprintd.service.'
+  echo 'Existing fingerprints and reader calibration are retained.'
+}
+pre_remove() {
+  if [[ -d /run/systemd/system ]]; then
+    systemctl stop fprintd.service goodix521d-worker.service goodix521d-worker.socket
+    systemctl disable goodix521d-worker.socket
+  fi
+}
+post_remove() {
+  echo 'Private Goodix backend removed. Local fingerprint/reader state was retained.'
+  echo 'The distribution fprintd service and libfprint remain installed.'
+}
