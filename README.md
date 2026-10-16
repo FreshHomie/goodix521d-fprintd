@@ -15,7 +15,7 @@ Native image processing, enrollment and matching integrated with libfprint,
 fprintd and KDE/GNOME. **No Windows DLL, Wine or proprietary engine download
 is required.** Other Goodix USB IDs and SPI readers are not supported.
 
-## Install
+## Install (Fedora 44)
 
 Download the x86_64 RPM from [Releases](https://github.com/FreshHomie/goodix521d-fprintd/releases).
 
@@ -31,6 +31,28 @@ covered, and hold still during capture.
 
 See [INSTALL.md](INSTALL.md) for upgrades, diagnostics and removal. Existing
 configured readers keep their fingerprints and calibration on upgrade.
+
+## Arch Linux / AUR
+
+Experimental Arch x86_64 builds and the AUR submission bundle are available in
+[the Arch release](https://github.com/FreshHomie/goodix521d-fprintd/releases/tag/arch-v0.1.0-1).
+The recipe is in [packaging/arch](packaging/arch). It has **not been submitted
+to the AUR registry yet**.
+
+Install the downloaded Arch package and measure your reader:
+
+```sh
+sudo pacman -U ./goodix521d-fprintd-0.1.0-1-x86_64.pkg.tar.zst
+sudo goodix521d-setup
+```
+
+For a source build, extract the AUR source bundle and run `makepkg -si` as a
+normal user with Arch's base-devel installed. See
+[Arch instructions](packaging/arch/README.md). Arch setup does not edit PAM.
+
+The package built and installed in an official Arch container and passed
+144 saved-scan operations. **Live scanner/KDE/suspend testing on Arch remains
+unverified**; the Fedora hardware results above do not establish Arch behavior.
 
 ## Status
 
