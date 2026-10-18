@@ -2,7 +2,7 @@
 
 Experimental **x86_64** support for USB **27c6:521d**, firmware
 **GFUSB_GM168SEC_APP_10019**. Builds the native matching engine, capture helpers,
-private libfprint libraries and private fprintd daemon from the pinned release18
+private libfprint libraries and private fprintd daemon from the pinned release19
 source archive. No Windows DLL, Wine, RPM extraction or Fedora binaries are used.
 This Arch port requires separate hardware testing; Fedora results do not certify
 Arch/KDE/GNOME behavior. Other USB IDs and SPI models are unsupported.
@@ -35,6 +35,11 @@ using the ArchWiki guide and your display manager's instructions:
 https://wiki.archlinux.org/title/Fingerprint_authentication
 Enrollment alone does not configure every PAM service automatically.
 
+Version0.1.0-2 includes the release19 quick-tap fix: unsupported classified
+frames request retries instead of disconnecting fingerprint authentication.
+Matching thresholds are unchanged. Existing fingerprints and calibration are
+retained; this upgrade does not require re-enrollment.
+
 ## Upgrade, diagnostics, removal
 
 Finish active scans before upgrading. Restart services after an upgrade:
@@ -62,7 +67,7 @@ makepkg --printsrcinfo > .SRCINFO
 makepkg --source
 ```
 
-Arch package version0.1.0-1 uses upstream release18. The source archive and local
+Arch package version0.1.0-2 uses upstream release19. The source archive and local
 adaptation files have SHA256 pins. `!strip` preserves the native library hash
 that the worker checks at runtime; the upstream builder strips its debug data
 before generating this hash.

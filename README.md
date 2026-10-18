@@ -35,16 +35,15 @@ configured readers keep their fingerprints and calibration on upgrade.
 ## Arch Linux / AUR
 
 Experimental Arch x86_64 builds and the AUR submission bundle are available in
-[the Arch release](https://github.com/FreshHomie/goodix521d-fprintd/releases/tag/arch-v0.1.0-1).
-The recipe is in [packaging/arch](packaging/arch). The existing Arch binary is
-based on release18 and does not include the release19 quick-tap fix; a direct
-Git source build includes it. It has **not been submitted
+[the Arch release](https://github.com/FreshHomie/goodix521d-fprintd/releases/tag/arch-v0.1.0-2).
+The recipe is in [packaging/arch](packaging/arch). Arch package **0.1.0-2**
+includes the same release19 quick-tap fix as Fedora. It has **not been submitted
 to the AUR registry yet**.
 
 Install the downloaded Arch package and measure your reader:
 
 ```sh
-sudo pacman -U ./goodix521d-fprintd-0.1.0-1-x86_64.pkg.tar.zst
+sudo pacman -U ./goodix521d-fprintd-0.1.0-2-x86_64.pkg.tar.zst
 sudo goodix521d-setup
 ```
 
@@ -53,7 +52,7 @@ normal user with Arch's base-devel installed. See
 [Arch instructions](packaging/arch/README.md). Arch setup does not edit PAM.
 
 The package built and installed in an official Arch container and passed
-144 saved-scan operations. **Live scanner/KDE/suspend testing on Arch remains
+152 saved-scan operations, including classified-frame retries and recovery. **Live scanner/KDE/suspend testing on Arch remains
 unverified**; the Fedora hardware results above do not establish Arch behavior.
 
 ## Status

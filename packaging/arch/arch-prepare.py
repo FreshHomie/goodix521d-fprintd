@@ -62,4 +62,4 @@ for node in tree.body:
         lines=s.splitlines(keepends=True);lines[node.lineno-1:node.end_lineno]=["def configure_authentication(runner=None):\n    return 'manual PAM configuration required; setup does not edit PAM'\n"];s=''.join(lines);break
 support.write_text(s)
 # Record the packaging adaptation separately from the upstream source inventory.
-(root/'package/ARCH-ADAPTATION.json').write_text(json.dumps({'base':'Fedora release18 source archive','paths':'/usr/lib/goodix521d','pam_modified':False,'algorithm_settings_changed':False},indent=2)+'\n')
+(root/'package/ARCH-ADAPTATION.json').write_text(json.dumps({'base':'Fedora release19 source archive','paths':'/usr/lib/goodix521d','pam_modified':False,'algorithm_settings_changed':False},indent=2)+'\n')

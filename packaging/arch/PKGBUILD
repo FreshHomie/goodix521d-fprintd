@@ -1,7 +1,7 @@
 # Maintainer: FreshHomie <https://github.com/FreshHomie>
 pkgname=goodix521d-fprintd
 pkgver=0.1.0
-pkgrel=1
+pkgrel=2
 pkgdesc='Native Goodix USB 27c6:521d fingerprint backend with private libfprint/fprintd'
 arch=('x86_64')
 url='https://github.com/FreshHomie/goodix521d-fprintd'
@@ -13,13 +13,13 @@ install=goodix521d-fprintd.install
 # The worker pins its library's SHA256. Strip it exactly once in the upstream
 # builder; makepkg's later strip/debug stage must not change the pinned bytes.
 options=('!strip' '!debug')
-_upstream_release=18
+_upstream_release=19
 source=("${pkgname}-${pkgver}-r${_upstream_release}.tar.gz::${url}/releases/download/v${pkgver}-${_upstream_release}/${pkgname}-${pkgver}.tar.gz"
         'arch-prepare.py'
         'README.md')
-sha256sums=('3617925bbdd7274a209c9148b094a04f4581190eb4bbf601ff3fcedba05bfa3c'
-            '4fa19374c2663ddb23c44aba719789d8c891fd43c298bcc4aa428539067cb95f'
-            '12894ea1ebab68a7ff61f031e75dad3a0e7d8b3b7227480531af8f1ff30e36a6')
+sha256sums=('bc8db5f71c44e8d191552a779ff53ee09e09cc1110a09aebbd9c27952c2d72dd'
+            '5e7e53189f0da6d617f68a535d822e5cde7f7d9f35ff65b49e558171062fe861'
+            '6302fa3b210db4be97e9726cb30ce5078f07fbc74c8024e6ecf8ad46a143c418')
 
 prepare() {
   python "$srcdir/arch-prepare.py" "$srcdir/$pkgname-$pkgver"
