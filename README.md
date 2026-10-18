@@ -20,7 +20,7 @@ is required.** Other Goodix USB IDs and SPI readers are not supported.
 Download the x86_64 RPM from [Releases](https://github.com/FreshHomie/goodix521d-fprintd/releases).
 
 ```sh
-sudo dnf install ./goodix521d-fprintd-0.1.0-18.fc44.x86_64.rpm
+sudo dnf install ./goodix521d-fprintd-0.1.0-19.fc44.x86_64.rpm
 sudo goodix521d-setup
 ```
 
@@ -36,7 +36,9 @@ configured readers keep their fingerprints and calibration on upgrade.
 
 Experimental Arch x86_64 builds and the AUR submission bundle are available in
 [the Arch release](https://github.com/FreshHomie/goodix521d-fprintd/releases/tag/arch-v0.1.0-1).
-The recipe is in [packaging/arch](packaging/arch). It has **not been submitted
+The recipe is in [packaging/arch](packaging/arch). The existing Arch binary is
+based on release18 and does not include the release19 quick-tap fix; a direct
+Git source build includes it. It has **not been submitted
 to the AUR registry yet**.
 
 Install the downloaded Arch package and measure your reader:
@@ -58,8 +60,12 @@ unverified**; the Fedora hardware results above do not establish Arch behavior.
 
 Experimental release, tested on the development machine. It passed KDE
 enrollment/unlock, wrong-finger rejection, reboot and suspend/resume tests.
-Release18 builds every compiled component from source and passed the package
-audit, 17 worker checks and saved-live-scan replay. First-time setup on another machine has not
+Release19 fixes fingerprint authentication ending after a quick tap: unsupported
+classified frames request a retry instead of disconnecting. Subsequent steady
+holds were confirmed to unlock on the development machine. Matching thresholds
+remain unchanged. It passed the package audit, 18 worker checks and offline
+frame/recovery regression tests. Reboot and suspend were tested on earlier
+versions; those lifecycle checks have not yet been repeated for release19. First-time setup on another machine has not
 been verified. Keep password access available.
 
 Placement can still cause rejection. A cold reader or resumed reader may need
@@ -90,7 +96,7 @@ helpers, compile recipe and build scripts. No prebuilt driver binaries are used
 as source-build inputs. Install the spec's BuildRequires, then rebuild:
 
 ```sh
-rpmbuild --rebuild goodix521d-fprintd-0.1.0-18.fc44.src.rpm
+rpmbuild --rebuild goodix521d-fprintd-0.1.0-19.fc44.src.rpm
 ```
 
 No personal fingerprints, saved scan results or reader calibration are shipped.

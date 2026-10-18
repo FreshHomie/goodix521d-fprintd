@@ -1,6 +1,6 @@
 Name:           goodix521d-fprintd
 Version:        0.1.0
-Release:        18%{?dist}
+Release:        19%{?dist}
 Summary:        Experimental Goodix 27c6:521d backend for fprintd
 License:        LGPL-2.1-or-later AND GPL-2.0-or-later AND MIT
 Source0:        %{name}-%{version}.tar.gz
@@ -94,6 +94,10 @@ fi
 %dir %{_sharedstatedir}/goodix521d
 
 %changelog
+* Sun Oct 18 2026 Local Goodix development - 0.1.0-19
+- Treat unsupported probe classifications as frame retries without matching or learning.
+- Preserve independent same-template frame quorum and cached capture behavior.
+- Log bounded native failure stage/codes without fingerprint or request contents.
 * Fri Oct 16 2026 Local Goodix development - 0.1.0-18
 - Build native matching, capture libraries, helpers and paired daemon from source.
 - Include no Windows DLL, PE loader, user fingerprints or calibration.

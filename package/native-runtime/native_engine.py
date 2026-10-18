@@ -1,8 +1,13 @@
 # SPDX-License-Identifier: MIT
 """Native preprocessing, enrollment and persistent matching worker API."""
-import collections,ctypes as C,hashlib,struct,time
+import collections,ctypes as C,hashlib,struct,time,sys
 from native_rpc import ENGINE_HASH
 MAX=384*1024
+
+class NativeFailure(RuntimeError):
+ def __init__(self,stage,rc,status=None):
+  self.stage=stage;self.rc=int(rc);self.status=None if status is None else int(status)
+  super().__init__('Native operation failed')
 
 def data(value,length=None):
  if not isinstance(value,str) or len(value)>MAX*2 or len(value)%2:raise ValueError('Invalid bounded data')
@@ -52,7 +57,8 @@ class Engine:
   if op=='preprocess':
    background=data(request['background'],10240);raw=data(request['raw'],10240)
    output=C.create_string_buffer(5120);result=(C.c_int32*3)()
-   if self.lib.gx_worker_preprocess(buffer(background),buffer(raw),output,result) or result[0]:raise RuntimeError('Native preprocessing rejected frame')
+   rc=self.lib.gx_worker_preprocess(buffer(background),buffer(raw),output,result)
+   if rc or result[0]:raise NativeFailure('preprocess',rc,result[0])
    return {'pixels':output.raw.hex(),'quality':result[1],'coverage':result[2]}
   records=request['records'];verifying=op in ('verify','study')
   if not isinstance(records,list) or not 0<=len(records)<=18 or op!='verify' and len(records)==0 or verifying and len(records)>1 or op=='save' and len(records)!=18:raise ValueError('Invalid record count')
@@ -73,8 +79,11 @@ class Engine:
   packet=data(request['native']);key,owner=self.owner(packet);before=self.export(owner)
   if not normalized:return {'decisions':[],'repack_byte_identical':before==packet,'owned_template_deleted':False}
   pixels,q,cov=normalized[0];result=(C.c_int32*4)()
-  if self.lib.gx_worker_identify(owner,buffer(pixels),q,cov,int(op=='study'),result):raise RuntimeError('Native identification failed')
+  rc=self.lib.gx_worker_identify(owner,buffer(pixels),q,cov,int(op=='study'),result)
+  if rc:raise NativeFailure({-2:'feature-extract',-3:'comparison'}.get(rc,'identify'),rc)
   status,decision,action,selected=result;positive=status==0 and decision>0
+  if status==131 and selected==-2:
+   print('Goodix native frame retry: unsupported probe classification; no match or learning',file=sys.stderr,flush=True)
   answer={'decisions':[{'phase':'identify','sample':0,'kind':1,'status':status,'matched_index':0 if positive else -1,'decision_value':decision,'coverage':cov,'quality':q}],
           'repack_byte_identical':before==packet,'owned_template_deleted':False}
   if op=='study':

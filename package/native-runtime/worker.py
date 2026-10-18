@@ -6,8 +6,22 @@ import argparse,json,os,resource,signal,socket,stat,struct,sys
 HERE=Path(__file__).resolve().parent
 sys.path.insert(0,str(HERE))
 from native_rpc import ENGINE_HASH,send,receive
-from native_engine import Engine
+from native_engine import Engine,NativeFailure
 STOP=False
+
+def failure_diagnostic(request,error):
+ # Only fixed labels, numeric codes, and code locations. No exception text,
+ # request values, image bytes, templates, or traceback locals are logged.
+ op=request.get('operation') if isinstance(request,dict) else None
+ if op not in ('preprocess','enroll-check','save','verify','study'):op='unknown'
+ locations=[];tb=error.__traceback__
+ while tb is not None:
+  locations.append(Path(tb.tb_frame.f_code.co_filename).name+':'+str(tb.tb_lineno))
+  tb=tb.tb_next
+ detail=''
+ if isinstance(error,NativeFailure):
+  detail=f' stage={error.stage} rc={error.rc} status={error.status}'
+ return f'Native operation rejected: op={op} exception={type(error).__name__}{detail} at='+','.join(locations[-4:])
 
 def trusted(path):
  for part in (path,*path.parents):
@@ -46,12 +60,13 @@ def main():
     connection.settimeout(5)
     _,uid,_=struct.unpack('3i',connection.getsockopt(socket.SOL_SOCKET,socket.SO_PEERCRED,12))
     if uid!=allowed_uid:continue
+    request=None
     try:
      request=receive(connection);result=engine.execute(request)
      reply={'version':1,'ok':True,'engine_sha256':ENGINE_HASH,'result':result}
     except Exception as error:
      # Never log image/template bytes or request contents.
-     print('Native operation rejected: '+type(error).__name__,file=sys.stderr,flush=True)
+     print(failure_diagnostic(request,error),file=sys.stderr,flush=True)
      reply={'version':1,'ok':False,'engine_sha256':ENGINE_HASH,'error':'Native engine rejected the operation'}
     try:send(connection,reply)
     except (OSError,ValueError):engine.close()

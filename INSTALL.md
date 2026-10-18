@@ -9,7 +9,7 @@ supported by this package. No Windows DLL, Wine or driver download is required.
 Download the x86_64 RPM and install it:
 
 ```sh
-sudo dnf install ./goodix521d-fprintd-0.1.0-18.fc44.x86_64.rpm
+sudo dnf install ./goodix521d-fprintd-0.1.0-19.fc44.x86_64.rpm
 sudo goodix521d-setup
 ```
 
@@ -21,7 +21,7 @@ leave authselect unchanged. Open KDE Users or GNOME Users and enroll your finger
 when setup finishes. Lift fully between scans and vary placement slightly while
 maintaining contact over the sensor; hold still during each scan.
 
-## Upgrade from release17
+## Upgrade from release17 or release18
 
 Close fingerprint settings and finish any active scan. Existing fingerprints
 and reader calibration are retained. Do not run a diagnostic that masks fprintd
@@ -29,7 +29,7 @@ at the same time.
 
 ```sh
 sudo systemctl stop fprintd.service goodix521d-worker.service goodix521d-worker.socket
-sudo dnf upgrade ./goodix521d-fprintd-0.1.0-18.fc44.x86_64.rpm
+sudo dnf upgrade ./goodix521d-fprintd-0.1.0-19.fc44.x86_64.rpm
 sudo systemctl daemon-reload
 sudo systemctl enable --now goodix521d-worker.socket
 sudo systemctl start goodix521d-worker.service fprintd.service
@@ -37,6 +37,10 @@ sudo systemctl start goodix521d-worker.service fprintd.service
 
 An existing configured reader does not need a new guided measurement or
 re-enrollment solely for this upgrade. First-time users must run setup.
+
+Release19 handles unsupported classified frames as retries instead of ending
+fingerprint authentication after a quick tap. Lift after a short or incomplete
+touch, then press and hold normally. Matching thresholds are unchanged.
 
 ## Known limitations and diagnostics
 
@@ -64,6 +68,6 @@ The source RPM includes the capture and private fprintd source, local native
 engine source and pinned upstream Milan kernels, relocatable compile recipe,
 RPM spec and build scripts. No prebuilt driver/helper binaries or personal
 biometrics are required as build inputs. Install the spec's BuildRequires,
-then run `rpmbuild --rebuild goodix521d-fprintd-0.1.0-18.fc44.src.rpm`.
+then run `rpmbuild --rebuild goodix521d-fprintd-0.1.0-19.fc44.src.rpm`.
 The package does not replace the system libfprint files; its private libraries
 are selected only for fprintd through the installed service drop-in.

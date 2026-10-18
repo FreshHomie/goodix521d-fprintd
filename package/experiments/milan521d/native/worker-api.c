@@ -21,11 +21,17 @@ int gx_worker_identify(void *pointer,const uint8_t *pixels,int quality,int cover
  if(!pointer||!pixels||!result||quality<0||quality>100||coverage<0||coverage>100||flags<0||flags>2)return -1;
  WorkerOwner *p=pointer;Gx521dFeatureObject feature;Gx521dEngineResult out;
  int rc=gx521d_feature_extract(pixels,quality,coverage,0,&feature);
- if(!rc){int32_t count;memcpy(&count,feature.scalar_header+0xf0,4);
-  if(!count){memset(&feature,0,sizeof(feature));result[0]=131;result[1]=0;result[2]=0;result[3]=-1;return 0;}
+ if(rc){memset(&feature,0,sizeof(feature));return -2;}
+ {int32_t count,tag;memcpy(&count,feature.scalar_header+0xf0,4);memcpy(&tag,feature.scalar_header+0x150,4);
+  /* Extraction can succeed while marking an ordinary capture with a nonzero
+   * classification. The supported comparison path handles tag0 only. Such a
+   * frame must never be matched, learned, or mistaken for a broken controller.
+   * Reject this frame as a retry, preserving the owner/cache and all thresholds.
+   * selected=-2 distinguishes this supported-boundary retry from no features. */
+  if(!count||tag){memset(&feature,0,sizeof(feature));result[0]=131;result[1]=0;result[2]=0;result[3]=tag?-2:-1;return 0;}
  }
- if(!rc)rc=gx521d_engine_identify(p->template,&p->cache,&feature,0,flags,&out);
- memset(&feature,0,sizeof(feature));if(rc)return -1;
+ rc=gx521d_engine_identify(p->template,&p->cache,&feature,0,flags,&out);
+ memset(&feature,0,sizeof(feature));if(rc)return -3;
  result[0]=(int32_t)out.recognition.status;result[1]=out.recognition.decision;result[2]=out.study.action;result[3]=out.study.selected;return 0;
 }
 size_t gx_worker_export(void *pointer,uint8_t *bytes,size_t capacity)

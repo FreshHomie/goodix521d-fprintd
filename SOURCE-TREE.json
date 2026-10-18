@@ -74,6 +74,8 @@
     "package/upstream-fprintd/tests/prints/whorl.png"
   ],
   "omissions_affect_production_driver_build": false,
-  "native_algorithm_sources_modified": false,
-  "note": "The original complete upstream fixtures remain available in the release source archive; no local biometric captures are included."
+  "native_algorithm_sources_modified": true,
+  "note": "Original Git source import is release18; release19 adds conservative classified-frame retries at the worker boundary and bounded failure diagnostics. Core matching thresholds are unchanged. Omitted upstream fixtures remain available in the release source archives; no local biometric captures are included.",
+  "latest_release": 19,
+  "latest_release_source_archive_sha256": "bc8db5f71c44e8d191552a779ff53ee09e09cc1110a09aebbd9c27952c2d72dd"
 }

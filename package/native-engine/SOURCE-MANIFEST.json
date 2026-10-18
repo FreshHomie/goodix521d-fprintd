@@ -505,7 +505,7 @@
     "package/experiments/milan521d/native/template-feature.c": "9d6ffc0cdd407d75100d14d9da1c67fff70b8901d78d6f35710a878c32dcd4be",
     "package/experiments/milan521d/native/template-restore.c": "b149bce86001e4f9902646f352449d2f7b84ae6ae2b678495f9f7cc4ca9a888d",
     "package/experiments/milan521d/native/template.c": "84af9c45dce0dcdf89dda2da6bc037832a014f130de9784d7cdb8d4f243f0daf",
-    "package/experiments/milan521d/native/worker-api.c": "03411b8758c9e3b5db33a95873c64cfafe70bc25b581dd75edfdbbb9f4787177",
+    "package/experiments/milan521d/native/worker-api.c": "7b2a91c1ea156bf287d25527e43bc9b6833c143c86cd649ea6a13c2954e7b6ec",
     "package/experiments/milan521d/native/wrapper.c": "cd43c4996de074d417d4a5c0d55e0324e7edebf96cb19d13a9a6f1d8de82b443",
     "package/experiments/milan521d/sysroot/usr/include/libdeflate.h": "1bb50a3ff8c6980c1031c0e9bb324cf99df51379fdca77a358644cca841765cc",
     "package/experiments/milan521d/upstream/goodix53x5-libfprint-e68eb725b1a7845b401b1a3c9b0790921f12133e/drivers/goodix53x5/device/auth.c": "9f3d6c1082e90bc23666ced6c45fe57a4245d26fed232c54433740b86d891cfb",
@@ -614,15 +614,15 @@
     "package/experiments/milan521d/upstream/goodix53x5-libfprint-e68eb725b1a7845b401b1a3c9b0790921f12133e/drivers/goodix53x5/milan/transform.c": "2b8babbca20fe69336ba2dc7ecdb20ad43f838a5ddd3813a9a5d81e2f4868b81",
     "package/licenses/COPYING.fprintd": "cd5c66af63b509ccd75ec85fee41b6e5cbb77cd6bf9392a54900acc0f02be4a6",
     "package/licenses/COPYING.libfprint": "5df07007198989c622f5d41de8d703e7bef3d0e79d62e24332ee739a452af62a",
-    "package/native-engine/recipe.json": "d4628743795c160914cbd6265a5831d424ce47548a03ac5f2da2a26d27525ab1",
+    "package/native-engine/recipe.json": "c992bf284cc4d615807a635bf53e8f8ac96746bc3fbcf22e23393bae3ad5250b",
     "package/native-runtime/50-goodix521d.conf": "ad5d0e81f56f3c47293a31b85bac23597bb6bbe56c5137313b5b0be2cfec1d44",
     "package/native-runtime/goodix521d-worker.service": "f1d9e633011f2308438b34a43a7e261403f3f3191a76baab2c34b408c5607a53",
     "package/native-runtime/goodix521d.fc": "3941cdef5976fae30ff003904583f70ca0440b1bc03d8eb8482b0b36bc690ad3",
     "package/native-runtime/goodix521d.te": "dd85bf7a4320cb80ee1d84f2c4a6023cb0522cf980320553a7855f10f9362820",
-    "package/native-runtime/native_engine.py": "b56d06b0bdb060c66bea8c429e98b517ed616be34a12649c93b7081e02da8d01",
+    "package/native-runtime/native_engine.py": "cdf3106484d3e5f64238ec26a239f12885898debe20367cc2259ed0e4b7d1fcd",
     "package/native-runtime/setup.py": "c8a68b5b53d9b5605e0ce564686ba7c9a2a56ccfeeb8815da4ccb48a8b2ed16e",
     "package/native-runtime/setup_support.py": "24410f88cb58a4f6fa3131af82efbe2211ddc8eaf60687a49815ddec3f42beb5",
-    "package/native-runtime/worker.py": "70783991b734d7e5218d563604b3019ea0529c269e4e582d6aeecfaf715dc7e7",
+    "package/native-runtime/worker.py": "9cd775b4a5399caba7e489fb0d635aed900274480057189eafd9826aa30670df",
     "package/patches/fprintd-521d-session-learning.patch": "fbf9330cf4ed845fdc8acbd05be058e715a04fa82885a4733664871e18f59b4e",
     "package/patches/libfprint-idle-suspend-notify.patch": "f7bf4d646c2856f8389acdf0e3b1c5a1bbcca9d67dacd98c4f214f32d1a7e21a",
     "package/patches/libfprint-update-result.patch": "e3426bfd1a323e54bb4fe448a262b9b003b0b214af34831d4b0b2456b30c51d1",
@@ -791,5 +791,7 @@
     "re/vendor-harness/live/capture-session.c": "470b97f7fcdf5013cc3dc22307fe4867b20267b3c7aca6177d275f3c8067d4c8",
     "re/vendor-harness/live/contact-probe.c": "dd5fa1780b819540ccab25af7150bb3bbb3d22e9b25d182b5b9b93da60d71fd0",
     "re/vendor-harness/loader/LICENSE": "328752e9c6f14e006ee4ebeb3e4e8933c554f35c1bda6d7b06f815c4fdc25401"
-  }
+  },
+  "release": 19,
+  "note": "Git checkout omits upstream test fixtures listed in SOURCE-TREE.json; worker boundary/runtime source hashes updated for release19."
 }
