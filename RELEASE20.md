@@ -17,4 +17,4 @@ Download the x86_64 RPM and follow the attached INSTALL.md. New users run `sudo 
 
 Source RPM and full source archive are included. No Windows DLL or personal fingerprint scans/templates are shipped.
 
-Arch package 0.1.0-2 still uses release19 code and does not include this change. Keep password access available.
+Arch package 0.1.0-20 uses the same release20 source and includes this fix; see [the Arch pre-release](https://github.com/FreshHomie/goodix521d-fprintd/releases/tag/arch-v0.1.0-20). Keep password access available.

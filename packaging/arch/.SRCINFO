@@ -1,7 +1,7 @@
 pkgbase = goodix521d-fprintd
 	pkgdesc = Native Goodix USB 27c6:521d fingerprint backend with private libfprint/fprintd
 	pkgver = 0.1.0
-	pkgrel = 2
+	pkgrel = 20
 	url = https://github.com/FreshHomie/goodix521d-fprintd
 	install = goodix521d-fprintd.install
 	arch = x86_64
@@ -27,11 +27,11 @@ pkgbase = goodix521d-fprintd
 	depends = systemd
 	options = !strip
 	options = !debug
-	source = goodix521d-fprintd-0.1.0-r19.tar.gz::https://github.com/FreshHomie/goodix521d-fprintd/releases/download/v0.1.0-19/goodix521d-fprintd-0.1.0.tar.gz
+	source = goodix521d-fprintd-0.1.0-r20.tar.gz::https://github.com/FreshHomie/goodix521d-fprintd/releases/download/v0.1.0-20/goodix521d-fprintd-0.1.0.tar.gz
 	source = arch-prepare.py
 	source = README.md
-	sha256sums = bc8db5f71c44e8d191552a779ff53ee09e09cc1110a09aebbd9c27952c2d72dd
-	sha256sums = 5e7e53189f0da6d617f68a535d822e5cde7f7d9f35ff65b49e558171062fe861
-	sha256sums = 6302fa3b210db4be97e9726cb30ce5078f07fbc74c8024e6ecf8ad46a143c418
+	sha256sums = 8dee394d3380f939409b2fc65511bbd8be6b540e84060d0f0bd292fea1199dc2
+	sha256sums = f494c22859727b21f8eed018036c089f5e7a1f52c99406988c2b84dc4e31d020
+	sha256sums = 7c281a1b757a66d95bf84b764d41a56e1c36224964f5a43eb072c1df4a05160d
 
 pkgname = goodix521d-fprintd
