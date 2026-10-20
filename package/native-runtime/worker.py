@@ -68,6 +68,10 @@ def main():
      # Never log image/template bytes or request contents.
      print(failure_diagnostic(request,error),file=sys.stderr,flush=True)
      reply={'version':1,'ok':False,'engine_sha256':ENGINE_HASH,'error':'Native engine rejected the operation'}
+     if (isinstance(error,NativeFailure) and isinstance(request,dict) and
+         request.get('operation')=='preprocess' and
+         (error.rc==-12 and error.status==0x29bb or error.rc==0 and error.status==0x29aa)):
+      reply['retry']='clear-calibration'
     try:send(connection,reply)
     except (OSError,ValueError):engine.close()
  finally:

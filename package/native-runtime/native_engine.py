@@ -58,7 +58,7 @@ class Engine:
    background=data(request['background'],10240);raw=data(request['raw'],10240)
    output=C.create_string_buffer(5120);result=(C.c_int32*3)()
    rc=self.lib.gx_worker_preprocess(buffer(background),buffer(raw),output,result)
-   if rc or result[0]:raise NativeFailure('preprocess',rc,result[0])
+   if rc or result[0]:raise NativeFailure({-10:'background-range',-11:'raw-range',-12:'calibration-init'}.get(rc,'preprocess'),rc,result[0])
    return {'pixels':output.raw.hex(),'quality':result[1],'coverage':result[2]}
   records=request['records'];verifying=op in ('verify','study')
   if not isinstance(records,list) or not 0<=len(records)<=18 or op!='verify' and len(records)==0 or verifying and len(records)>1 or op=='save' and len(records)!=18:raise ValueError('Invalid record count')

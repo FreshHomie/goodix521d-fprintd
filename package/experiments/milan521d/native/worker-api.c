@@ -60,8 +60,11 @@ int gx_worker_enroll(const uint8_t *records,unsigned count,int rollback,uint8_t 
 int gx_worker_preprocess(const uint16_t *background,const uint16_t *raw,uint8_t *pixels,int32_t result[3])
 {
  if(!background||!raw||!pixels||!result)return -1;
- for(unsigned i=0;i<5120;i++)if(background[i]>4095||raw[i]>4095)return -1;
- Gx521dPreprocessor p;int rc=gx521d_preprocessor_init(&p,background);if(rc)return -1;
+ memset(result,0,3*sizeof(*result));
+ for(unsigned i=0;i<5120;i++)if(background[i]>4095)return -10;
+ for(unsigned i=0;i<5120;i++)if(raw[i]>4095)return -11;
+ Gx521dPreprocessor p;int rc=gx521d_preprocessor_init(&p,background);
+ if(rc){result[0]=rc;return -12;}
  uint8_t auxiliary[GX521D_AUXILIARY_BYTES];int32_t cq[2];
  Gx521dDescriptor source={.pixels=(void *)raw,.width=80,.height=64,.ppi=500,.bits=16,.channels=1,.bytes=10240,.frames=1};
  Gx521dDescriptor dest={.pixels=pixels,.width=80,.height=64,.ppi=500,.bits=8,.channels=1,.bytes=5120,.frames=1};

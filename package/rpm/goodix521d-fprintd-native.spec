@@ -1,6 +1,6 @@
 Name:           goodix521d-fprintd
 Version:        0.1.0
-Release:        19%{?dist}
+Release:        20%{?dist}
 Summary:        Experimental Goodix 27c6:521d backend for fprintd
 License:        LGPL-2.1-or-later AND GPL-2.0-or-later AND MIT
 Source0:        %{name}-%{version}.tar.gz
@@ -94,6 +94,10 @@ fi
 %dir %{_sharedstatedir}/goodix521d
 
 %changelog
+* Tue Oct 20 2026 Local Goodix development - 0.1.0-20
+- Preserve preprocessing failure stages and native input-retry status.
+- Reset capture/calibration on known rejected background or raw input and request a lift.
+- Retain fatal handling of invalid data, engine identity and unexpected failures.
 * Sun Oct 18 2026 Local Goodix development - 0.1.0-19
 - Treat unsupported probe classifications as frame retries without matching or learning.
 - Preserve independent same-template frame quorum and cached capture behavior.

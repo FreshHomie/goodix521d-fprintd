@@ -10,6 +10,9 @@ LIMIT=1024*1024
 SOCKET=Path('/run/goodix521d/worker.sock')
 ENGINE_HASH='5995d6565e602416cbe00f171ad4941203e345ccaddb490199274166adac4f5c'
 
+class CaptureRetry(RuntimeError):
+    """Validated native input rejection; caller must discard capture/calibration."""
+
 
 def exact(connection,n):
     data=bytearray()
@@ -52,6 +55,10 @@ class Client:
             connection.connect(str(self.path))
             send(connection,{'version':1,'engine_sha256':ENGINE_HASH,'operation':operation,**inputs})
             reply=receive(connection)
-        if reply.get('ok') is not True or reply.get('engine_sha256')!=ENGINE_HASH:
+        if reply.get('engine_sha256')!=ENGINE_HASH:
+            raise RuntimeError('Worker engine identity mismatch')
+        if reply.get('ok') is not True:
+            if operation=='preprocess' and reply.get('retry')=='clear-calibration':
+                raise CaptureRetry('Native input rejected; lift for fresh calibration')
             raise RuntimeError(reply.get('error','Algorithm worker failed'))
         return reply['result']

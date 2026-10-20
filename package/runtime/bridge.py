@@ -13,7 +13,7 @@ import tempfile
 import time
 import zlib
 sys.path.insert(0,str(Path(__file__).resolve().parent))
-from rpc import Client
+from rpc import Client,CaptureRetry
 from contact_reference import load as load_clear_reference
 from capture_cache import CaptureCache,epoch as cache_epoch,context as cache_context,validate as validate_cache,record as cache_record,MAX_SECONDS
 
@@ -58,6 +58,13 @@ def stop(signum,frame):
 
 
 class Controller:
+    def preprocess(self,**inputs):
+        try:return self.client.call('preprocess',**inputs)
+        except CaptureRetry:
+            self.cache.invalidate()
+            self.verification_cache=None;self.calibration_candidate=None
+            if hasattr(self,'host'):self.host.close()
+            raise RemoveFingerRequired('Native input rejected; lift for fresh calibration') from None
     def __init__(self,client=None):
         self.client=client or Client()
         self.cache=CaptureCache()
@@ -178,7 +185,7 @@ class Controller:
             if read12(directory/'clear-1.pgm')!=background:raise ValueError('Fresh calibration background mismatch')
             self.calibration_candidate=cache_record(background,baseline,calibration_context,calibration_stamp)
         # Same first temporal frame as the validated API; no voting/selection.
-        result=self.client.call('preprocess',background=transform(background).hex(),raw=transform(frames[0]).hex())
+        result=self.preprocess(background=transform(background).hex(),raw=transform(frames[0]).hex())
         self.last_calibration={'background':background,'baseline':baseline} if baseline is not None else None
         return result
     def capture_records(self,folder):
@@ -187,7 +194,7 @@ class Controller:
         background=transform(read12(directory/'capture-burst-0001-background.pgm')).hex()
         records=[first]
         for number in range(2,VERIFY_FRAME_COUNT+1):
-            records.append(self.client.call('preprocess',background=background,
+            records.append(self.preprocess(background=background,
                 raw=transform(read12(directory/f'capture-burst-0001-raw-{number:02d}.pgm')).hex()))
         return records
     def enroll(self,folder):

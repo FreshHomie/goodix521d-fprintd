@@ -20,7 +20,7 @@ is required.** Other Goodix USB IDs and SPI readers are not supported.
 Download the x86_64 RPM from [Releases](https://github.com/FreshHomie/goodix521d-fprintd/releases).
 
 ```sh
-sudo dnf install ./goodix521d-fprintd-0.1.0-19.fc44.x86_64.rpm
+sudo dnf install ./goodix521d-fprintd-0.1.0-20.fc44.x86_64.rpm
 sudo goodix521d-setup
 ```
 
@@ -56,6 +56,14 @@ The package built and installed in an official Arch container and passed
 unverified**; the Fedora hardware results above do not establish Arch behavior.
 
 ## Status
+
+Release20 is a **pre-release awaiting live hardware confirmation**. It preserves
+native preprocessing error codes and turns known rejected calibration/raw images
+into lift-and-retry requests with fresh calibration, instead of disconnecting.
+Matching thresholds are unchanged. Package/source audits, seven preprocessing
+recovery checks, 18 replacement checks and the 62-frame quick-tap regression passed.
+Arch 0.1.0-2 still contains the release19 code; it does not include this new fix.
+
 
 Experimental release, tested on the development machine. It passed KDE
 enrollment/unlock, wrong-finger rejection, reboot and suspend/resume tests.
@@ -95,7 +103,7 @@ helpers, compile recipe and build scripts. No prebuilt driver binaries are used
 as source-build inputs. Install the spec's BuildRequires, then rebuild:
 
 ```sh
-rpmbuild --rebuild goodix521d-fprintd-0.1.0-19.fc44.src.rpm
+rpmbuild --rebuild goodix521d-fprintd-0.1.0-20.fc44.src.rpm
 ```
 
 No personal fingerprints, saved scan results or reader calibration are shipped.

@@ -155,7 +155,7 @@ class SessionController(bridge.Controller):
         self.learning_allowed=not self.host.learned_current_contact
         self.verify_guard()
         background=bridge.transform(bridge.read12(directory/'capture-burst-0001-background.pgm')).hex()
-        first=self.client.call('preprocess',background=background,
+        first=self.preprocess(background=background,
             raw=bridge.transform(bridge.read12(directory/'capture-burst-0001-raw-01.pgm')).hex())
         print('Goodix capture: retained session' if result['retained'] else 'Goodix capture: fresh session calibration',
               file=sys.stderr,flush=True)
